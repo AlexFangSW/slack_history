@@ -3,9 +3,6 @@ from setuptools import setup, find_packages
 with open("README.md", "r", encoding="utf-8") as file:
     long_description = file.read()
 
-with open("requirements.txt", "r") as file:
-    install_requires = file.readlines()
-
 version = {}
 with open("src/slackhistory/version.py") as file:
     exec(file.read(), version)
@@ -22,6 +19,6 @@ setup(
     url="https://github.com/AlexFangSW/slack_history",
     package_dir={'': 'src'},
     packages=find_packages(where='src', exclude=['slackhistory.tests']),
-    install_requires=install_requires,
+    install_requires=["slack_sdk>=3.23.0", "aiohttp>=3.8.6"],
     python_requires='>=3.11',
     keywords=["slackhistory", "slack history", "slack helper"])
