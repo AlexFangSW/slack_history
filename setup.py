@@ -13,7 +13,7 @@ with open("src/slackhistory/version.py") as file:
 setup(
     name="slackhistory",
     version=version['__version__'],
-    author="Alex",
+    author="AlexFangSW",
     author_email="alexfangsw@gmail.com",
     description=
     "A slack helper library to get history (messages and replies) of a channel",
