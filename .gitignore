@@ -1,0 +1,10 @@
+__pycache__
+build
+.*
+venv
+*.egg-info
+dist
+!.gitignore
+src/slackhistory/tests/data
+examples/*.json
+!examples/example_result.json

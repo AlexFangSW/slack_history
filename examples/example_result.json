@@ -1,0 +1,97 @@
+{
+    "ok": true,
+    "channel_name": "alex-playground",
+    "channel_id": "XXXXX",
+    "start_date": "2023-10-28 08:00:00",
+    "start_ts": "1698451200.0",
+    "end_date": "2023-11-3 22:00:00",
+    "end_ts": "1699020000.0",
+    "messages": [
+        {
+            "msg": {
+                "type": "message",
+                "subtype": "bot_message",
+                "text": "",
+                "ts": "1698986199.961499",
+                "bot_id": "XXXXX",
+                "thread_ts": "1698986199.961499",
+                "reply_count": 1,
+                "reply_users_count": 1,
+                "latest_reply": "1698988402.790669",
+                "reply_users": [
+                    "XXXXX"
+                ],
+                "is_locked": false,
+                "subscribed": false,
+                "attachments": [
+                    {
+                        "id": 1,
+                        "color": "2eb886",
+                        "fallback": "Message",
+                        "text": "Message",
+                        "title": "Message",
+                        "title_link": "link",
+                        "mrkdwn_in": [
+                            "fallback",
+                            "pretext",
+                            "text"
+                        ]
+                    }
+                ]
+            },
+            "replies": [
+                {
+                    "client_msg_id": "XXXXX",
+                    "type": "message",
+                    "text": "Message",
+                    "user": "XXXXX",
+                    "ts": "1698988402.790669",
+                    "blocks": [
+                        {
+                            "type": "rich_text",
+                            "block_id": "7SIm3",
+                            "elements": [
+                                {
+                                    "type": "rich_text_section",
+                                    "elements": [
+                                        {
+                                            "type": "text",
+                                            "text": "Message"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "team": "XXXXX",
+                    "thread_ts": "1698986199.961499"
+                }
+            ]
+        },
+        {
+            "msg": {
+                "type": "message",
+                "subtype": "bot_message",
+                "text": "",
+                "ts": "1698986140.062959",
+                "bot_id": "XXXXX",
+                "attachments": [
+                    {
+                        "id": 1,
+                        "color": "a30200",
+                        "fallback": "Message",
+                        "text": "Message",
+                        "title": "Message",
+                        "title_link": "link",
+                        "mrkdwn_in": [
+                            "fallback",
+                            "pretext",
+                            "text"
+                        ]
+                    }
+                ]
+            },
+            "replies": []
+        }
+    ]
+}
