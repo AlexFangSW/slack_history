@@ -12,6 +12,7 @@ setup(
     version=version['__version__'],
     author="AlexFangSW",
     author_email="alexfangsw@gmail.com",
+    license="MIT",
     description=
     "A slack helper library to get history (messages and replies) of a channel",
     long_description=long_description,
