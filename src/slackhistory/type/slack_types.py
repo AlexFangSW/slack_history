@@ -44,6 +44,17 @@ class BaseDataClass:
 
 
 @dataclass
+class Channel(BaseDataClass):
+    id: str = ""
+    name: str = ""
+
+
+@dataclass
+class ChannelResponseMetadata(BaseDataClass):
+    next_cursor: str | None = None
+
+
+@dataclass
 class Replies(BaseDataClass):
     '''
     Slack api responses with a list of messages.
@@ -53,29 +64,33 @@ class Replies(BaseDataClass):
     '''
     ok: bool
     messages: list[dict] = field(default_factory=list)
+    has_more: bool = False
+    response_metadata: ChannelResponseMetadata = field(
+        default_factory=ChannelResponseMetadata)
 
     @property
     def reply_list(self) -> list[dict]:
         return self.messages[1:]
 
-
-@dataclass
-class Channel(BaseDataClass):
-    id: str = ""
-    name: str = ""
-
-
-@dataclass
-class ChannelResponseMetadata(BaseDataClass):
-    next_cursor: str = ""
+    @classmethod
+    def from_dict(cls, inpt: dict) -> Self:
+        tmp_dict = {}
+        for f in fields(cls):
+            if value := inpt.get(f.name, None):
+                if f.name == "response_metadata":
+                    tmp_dict[f.name] = ChannelResponseMetadata.from_dict(
+                        inpt["response_metadata"])
+                else:
+                    tmp_dict[f.name] = value
+        return cls(**tmp_dict)
 
 
 @dataclass
 class ChannelList(BaseDataClass):
     ok: bool
+    channels: list[Channel] = field(default_factory=list)
     response_metadata: ChannelResponseMetadata = field(
         default_factory=ChannelResponseMetadata)
-    channels: list[Channel] = field(default_factory=list)
 
     @classmethod
     def from_dict(cls, inpt: dict) -> Self:
@@ -100,6 +115,20 @@ class ChannelHistory(BaseDataClass):
     has_more: bool = False
     oldest: str = ""
     messages: list[dict] = field(default_factory=list)
+    response_metadata: ChannelResponseMetadata = field(
+        default_factory=ChannelResponseMetadata)
+
+    @classmethod
+    def from_dict(cls, inpt: dict) -> Self:
+        tmp_dict = {}
+        for f in fields(cls):
+            if value := inpt.get(f.name, None):
+                if f.name == "response_metadata":
+                    tmp_dict[f.name] = ChannelResponseMetadata.from_dict(
+                        inpt["response_metadata"])
+                else:
+                    tmp_dict[f.name] = value
+        return cls(**tmp_dict)
 
 
 @dataclass

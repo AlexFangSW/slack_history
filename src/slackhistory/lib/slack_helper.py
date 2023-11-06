@@ -29,12 +29,17 @@ class SlackHelper:
 
     async def _get_channel_id(self, channel_name: str) -> str:
         logger.log(TRACE, "_get_channel_id")
-        channel_list = await self._get_channel_list()
         channel_id = ""
-        for channel in channel_list.channels:
-            if channel.name == channel_name:
-                channel_id = channel.id
+        cursor = None
+        while not channel_id:
+            channel_list = await self._get_channel_list(cursor)
+            cursor = channel_list.response_metadata.next_cursor
+            if not cursor:
                 break
+            for channel in channel_list.channels:
+                if channel.name == channel_name:
+                    channel_id = channel.id
+                    break
         return channel_id
 
     def _load_cache(self, file: str) -> dict:
@@ -43,25 +48,47 @@ class SlackHelper:
     def _save_cache(self, file: str):
         ...
 
-    async def _get_channel_list(self) -> ChannelList:
+    async def _get_channel_list(self, cursor: str | None = None) -> ChannelList:
         logger.log(TRACE, "_get_channel_list")
         res: AsyncSlackResponse = await self._slack_client.conversations_list(
-            types="public_channel,private_channel")
+            types="public_channel,private_channel", limit=99, cursor=cursor)
         return ChannelList.from_dict(res.data)  # type: ignore
 
     async def _get_channel_history(self, channel_id: str, start_date: str,
                                    end_date: str) -> ChannelHistory:
         logger.log(TRACE, "_get_channel_history")
-        res: AsyncSlackResponse = await self._slack_client.conversations_history(
-            channel=channel_id, oldest=start_date, latest=end_date)
-        return ChannelHistory.from_dict(res.data)  # type: ignore
+        result = ChannelHistory(ok=True, has_more=True)
+        cursor = None
+        while result.has_more:
+            res: AsyncSlackResponse = await self._slack_client.conversations_history(
+                channel=channel_id,
+                limit=99,
+                oldest=start_date,
+                latest=end_date,
+                cursor=cursor)
+            tmp = ChannelHistory.from_dict(res.data)  # type: ignore
+            result.has_more = tmp.has_more
+            result.ok = tmp.ok
+            result.messages += tmp.messages
+            cursor = tmp.response_metadata.next_cursor
+        return result
 
     async def _get_message_reply_list(self, channel_id: str,
                                       ts: str) -> Replies:
         logger.log(TRACE, "_get_message_reply_list")
-        res: AsyncSlackResponse = await self._slack_client.conversations_replies(
-            channel=channel_id, ts=ts)
-        return Replies.from_dict(res.data)  # type: ignore
+        result = Replies(ok=True, has_more=True)
+        cursor = None
+        while result.has_more:
+            res: AsyncSlackResponse = await self._slack_client.conversations_replies(
+                channel=channel_id, limit=99, ts=ts, cursor=cursor)
+            tmp = Replies.from_dict(res.data)  # type: ignore
+            result.has_more = tmp.has_more
+            result.ok = tmp.ok
+            logger.log(TRACE, "tmp.reply_list: %s", tmp.reply_list)
+            result.messages += tmp.reply_list
+            cursor = tmp.response_metadata.next_cursor
+        logger.log(TRACE, "result.messages: %s", result.messages)
+        return result
 
     def _to_timestamp(self, inpt: str) -> str:
         logger.log(TRACE, "_to_timestamp")
@@ -99,8 +126,13 @@ class SlackHelper:
 
         async def _update_reply(msg_and_reply: MessageAndReplies,
                                 channel_id: str, ts: str, event: Event):
-            result = await self._get_message_reply_list(channel_id, ts)
-            msg_and_reply.replies = result.messages[1:]
+            logger.log(TRACE, "_update_reply")
+            replies = await self._get_message_reply_list(channel_id, ts)
+            logger.log(TRACE, "replies.messages: %s", replies.messages)
+            # 這邊不用過濾第一個～～
+            msg_and_reply.replies = replies.messages
+            logger.log(TRACE, "msg_and_reply.replies: %s",
+                       len(msg_and_reply.replies))
             event.set()
 
         event_list: list[Event] = []

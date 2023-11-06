@@ -75,12 +75,9 @@ def test_slack_channel_history():
     })
 
     assert channel_history.to_dict() == {
-        'ok':
-            True,
-        'has_more':
-            False,
-        'oldest':
-            '1690899691.477708',
+        'ok': True,
+        'has_more': False,
+        'oldest': '1690899691.477708',
         'messages': [{
             'client_msg_id': 'XXXXX',
             'type': 'message',
@@ -143,5 +140,8 @@ def test_slack_channel_history():
             'bot_id': 'XXXXX',
             'bot_link': '<XXXXX>',
             'ts': '1691498801.191669'
-        }]
+        }],
+        'response_metadata': {
+            'next_cursor': None
+        }
     }

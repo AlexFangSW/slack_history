@@ -60,6 +60,11 @@ def test_slack_replies():
     assert reply.to_dict() == {
         'ok':
             True,
+        "has_more":
+            False,
+        "response_metadata": {
+            "next_cursor": None
+        },
         'messages': [{
             'client_msg_id': 'XXXXX',
             'type': 'message',
